@@ -1,92 +1,98 @@
 package com.example.project;
 
 public class BT<T> {
-    BTNode<T> root, current;
-	
+	BTNode<T> root, current;
+
 	/** Creates a new instance of BT */
 	public BT() {
 		root = current = null;
 	}
-	public boolean empty(){
+
+	public boolean empty() {
 		return root == null;
 	}
-    public T retrieve() {
+
+	public T retrieve() {
 		return current.data;
 	}
+
 	public void update(T val) {
 		current.data = val;
 	}
-    public boolean insert(Relative rel, T val) {
-		switch(rel) {
-		   case Root:
-			if(!empty())
-                return false;
-            current = root = new BTNode<T>(val);
+
+	public boolean insert(Relative rel, T val) {
+		switch (rel) {
+		case Root:
+			if (!empty())
+				return false;
+			current = root = new BTNode<T>(val);
 			return true;
-		   case Parent:	// This is an impossible case.
+		case Parent: // This is an impossible case.
 			return false;
-		   case LeftChild:
-			if(current.left != null)
-                return false;
+		case LeftChild:
+			if (current.left != null)
+				return false;
 			current.left = new BTNode<T>(val);
 			current = current.left;
 			return true;
-		   case RightChild:
-			if(current.right != null)
-                return false;
-			current.right = new BTNode<T> (val);
+		case RightChild:
+			if (current.right != null)
+				return false;
+			current.right = new BTNode<T>(val);
 			current = current.right;
 			return true;
-		   default:
+		default:
 			return false;
 		}
 	}
-    public void deleteSubtree(){
-		if(current == root){
+
+	public void deleteSubtree() {
+		if (current == root) {
 			current = root = null;
-		}
-		else {
+		} else {
 			BTNode<T> p = current;
 			find(Relative.Parent);
-			if(current.left == p)
+			if (current.left == p)
 				current.left = null;
-			else 
+			else
 				current.right = null;
 			current = root;
 		}
 	}
-    public boolean find(Relative rel){
+
+	public boolean find(Relative rel) {
 		switch (rel) {
-		   case Root:	// Easy case
+		case Root: // Easy case
 			current = root;
 			return true;
-		   case Parent:
-			if(current == root)
-                return false;
+		case Parent:
+			if (current == root)
+				return false;
 			current = findparent(current, root);
 			return true;
-		   case LeftChild:
-			if(current.left == null)
-                return false;
+		case LeftChild:
+			if (current.left == null)
+				return false;
 			current = current.left;
 			return true;
-		   case RightChild:
-			if(current.right == null)
-                return false;
+		case RightChild:
+			if (current.right == null)
+				return false;
 			current = current.right;
 			return true;
-		   default:
+		default:
 			return false;
 		}
 	}
-    private BTNode<T> findparent(BTNode<T> p, BTNode<T> t) {
-		if(t == null)
-			return null;	// empty tree
-		
-		if(t.right == null && t.left == null)
+
+	private BTNode<T> findparent(BTNode<T> p, BTNode<T> t) {
+		if (t == null)
+			return null; // empty tree
+
+		if (t.right == null && t.left == null)
 			return null;
-		else if(t.right == p || t.left == p)
-			return t;	// parent is t
+		else if (t.right == p || t.left == p)
+			return t; // parent is t
 		else {
 			BTNode<T> q = findparent(p, t.left);
 			if (q != null)
@@ -95,11 +101,38 @@ public class BT<T> {
 				return findparent(p, t.right);
 		}
 	}
+
 	public boolean isLeaf() {
 		return current.left == null && current.right == null;
 	}
+
 	public int countLeaves() {
-		throw new UnsupportedOperationException("Not supported yet.");
-		// Write the method countLeafs that should return the number of leaf nodes in the tree. A leaf node is a node that has no children.
+		if (root == null)
+			return 0;
+
+		int count = 0;
+		LinkedStack<BTNode<T>> st = new LinkedStack<BTNode<T>>();
+		st.push(root);
+
+		while (!st.empty()) {
+			BTNode<T> tmp = st.pop();
+
+			if (tmp.left == null & tmp.right == null)
+				count++;
+
+			else {
+				if (tmp.right != null)
+					st.push(tmp.right);
+				if (tmp.left != null)
+					st.push(tmp.left);
+
+			}
+
+		}
+
+		return count;
+
+		// Write the method countLeafs that should return the number of leaf nodes in
+		// the tree. A leaf node is a node that has no children.
 	}
 }
